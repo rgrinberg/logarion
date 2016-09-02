@@ -26,7 +26,7 @@ let log_meta_field line =
   (List.nth e 0, List.nth e 1)
 
 let log_meta yaml =
-  let lines = Str.split (Str.regexp "\n") yaml in
+  let lines = split (regexp "\n") yaml in
   let fields = List.map log_meta_field lines in
   let meta = { title = ""; author = { name = ""; email = "" };
                dates= { edited = 0.0; published = 0.0 };
@@ -39,7 +39,6 @@ let log_meta yaml =
   List.fold_left field_map meta fields
 
 let ymd s =
-  let open Str in
   let segments = bounded_split (regexp "^---$") s 3 in
   let yaml_str = List.nth segments 0 in
   let md_str = List.nth segments 1 in
