@@ -44,17 +44,11 @@ let ymd s =
   let md_str = List.nth segments 1 in
   Printf.printf "%s" yaml_str;
   let meta = log_meta yaml_str in
-  print_endline meta.title;
-  Printf.printf "%s" md_str
+  (meta, md_str)
 
-let html_of string =
+let html_of (meta, md) =
   let open Omd in
-  to_html (of_string string)
-
-let test = "---
-title: Test
-author: orbifx
----
-Hello _world_!"
-
-let () = ymd test
+  let body = to_html (of_string md) in
+  "<!DOCTYPE html><html><head><title>" ^ meta.title ^ "</title></head><body>"
+  ^ body
+  ^ "</body></html>"
