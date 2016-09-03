@@ -19,6 +19,11 @@ type log_meta_t = {
     abstract: string;
   }
 
+type ymd_t = {
+    meta: log_meta_t;
+    text: string;
+  }
+
 open Str
 
 let log_meta_field line =
@@ -28,27 +33,20 @@ let log_meta_field line =
 let log_meta yaml =
   let lines = split (regexp "\n") yaml in
   let fields = List.map log_meta_field lines in
-  let meta = { title = ""; author = { name = ""; email = "" };
-               dates= { edited = 0.0; published = 0.0 };
-               categories = []; topics = []; keywords = []; series = [];
-               abstract = "" } in
+  let m = { title = ""; author = { name = ""; email = "" };
+            dates= { edited = 0.0; published = 0.0 };
+            categories = []; topics = []; keywords = []; series = [];
+            abstract = "" } in
   let field_map meta (k,v) = match k with
     | "title" -> { meta with title = v }
     | _ -> meta
   in
-  List.fold_left field_map meta fields
+  List.fold_left field_map m fields
 
 let ymd s =
   let segments = bounded_split (regexp "^---$") s 3 in
   let yaml_str = List.nth segments 0 in
   let md_str = List.nth segments 1 in
   Printf.printf "%s" yaml_str;
-  let meta = log_meta yaml_str in
-  (meta, md_str)
-
-let html_of (meta, md) =
-  let open Omd in
-  let body = to_html (of_string md) in
-  "<!DOCTYPE html><html><head><title>" ^ meta.title ^ "</title></head><body>"
-  ^ body
-  ^ "</body></html>"
+  let m = log_meta yaml_str in
+  { meta = m; text = md_str }
