@@ -3,7 +3,7 @@ all: web
 
 web: logarion.cmx html.cmx src/web.ml
 	ocamlfind ocamlopt -o logarion-web -linkpkg \
-	-package opium.unix,omd,Str,tyxml \
+	-package opium.unix,omd,str,tyxml \
 	logarion.cmx html.cmx src/web.ml
 
 html.cmx: src/html.ml logarion.cmx
