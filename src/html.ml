@@ -8,6 +8,13 @@ let html_of ymd =
          (title (Unsafe.data ymd_title))
          [link ~rel:[`Stylesheet] ~href:"style.css" ();]
       )
-      (body [Unsafe.data ymd_body])
+      (body [
+           header [
+               h1 [Unsafe.data ymd_title];
+               details (summary [Unsafe.data ymd.Logarion.meta.abstract]) [];
+             ];
+           Unsafe.data ymd_body;
+           footer [p []];
+      ])
   in
   Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml

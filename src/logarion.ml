@@ -39,6 +39,7 @@ let log_meta yaml =
             abstract = "" } in
   let field_map meta (k,v) = match k with
     | "title" -> { meta with title = v }
+    | "abstract" -> { meta with abstract = v }
     | _ -> meta
   in
   List.fold_left field_map m fields
