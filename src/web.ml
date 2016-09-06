@@ -9,13 +9,18 @@ let load_file f =
   (s)
 
 let print_css =
-  get "/style.css" begin fun req -> `String (load_file "ymd/style.css") |> respond' end
+  get "/style.css"
+      begin
+        fun req -> `String (load_file "ymd/style.css") |> respond'
+      end
     
 let print_ymd =
-  get "/:title" begin fun req ->
-                let file = "ymd/" ^ (param req "title") ^ ".ymd" in
-                `Html (Html.html_of (Logarion.ymd (load_file file))) |> respond'
-                end
+  get "/:title"
+      begin fun req ->
+      let filename = String.map (fun c -> if '/' = c then '_' else c) (param req "title") in
+      let filepath = "ymd/" ^ filename ^ ".ymd" in
+      `Html (Html.html_of (Logarion.ymd (load_file filepath))) |> respond'
+      end
 
 let _ =
   App.empty
