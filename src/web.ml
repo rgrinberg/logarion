@@ -1,16 +1,19 @@
 open Opium.Std
 
+let sanitised_path path =
+  let parent = Str.regexp "\.\./" in
+  Str.global_replace parent "" path
 
 let print_css =
   get "/style.css"
       begin
         fun req -> `String (Logarion.load_file "ymd/style.css") |> respond'
       end
-    
+
 let print_ymd =
   get "/:title"
       begin fun req ->
-      let filename = String.map (fun c -> if '/' = c then '_' else c) (param req "title") in
+      let filename = sanitised_path (param req "title") in
       let filepath = "ymd/" ^ filename ^ ".ymd" in
       `Html (Html.html_of (Logarion.ymd filepath)) |> respond'
       end
