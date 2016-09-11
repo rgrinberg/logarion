@@ -1,17 +1,10 @@
 open Opium.Std
 
-let load_file f =
-  let ic = open_in f in
-  let n = in_channel_length ic in
-  let s = String.create n in
-  really_input ic s 0 n;
-  close_in ic;
-  (s)
 
 let print_css =
   get "/style.css"
       begin
-        fun req -> `String (load_file "ymd/style.css") |> respond'
+        fun req -> `String (Logarion.load_file "ymd/style.css") |> respond'
       end
     
 let print_ymd =
@@ -19,11 +12,15 @@ let print_ymd =
       begin fun req ->
       let filename = String.map (fun c -> if '/' = c then '_' else c) (param req "title") in
       let filepath = "ymd/" ^ filename ^ ".ymd" in
-      `Html (Html.html_of (Logarion.ymd (load_file filepath))) |> respond'
+      `Html (Html.html_of (Logarion.ymd filepath)) |> respond'
       end
+
+let print_toc =
+  get "/" begin fun req -> `Html (Html.html_of_titles (Logarion.ymd_titles ())) |> respond' end
 
 let _ =
   App.empty
   |> print_ymd
   |> print_css
+  |> print_toc
   |> App.run_command

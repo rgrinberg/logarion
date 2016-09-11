@@ -18,3 +18,24 @@ let html_of ymd =
       ])
   in
   Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml
+
+let html_of_titles titles =
+  let open Tyxml.Html in
+  let link_item x = li [a ~a:[a_href ("/" ^ x)] [Unsafe.data x]] in
+  let tyhtml =
+    html
+      (head
+         (title (pcdata "Homepage"))
+         [link ~rel:[`Stylesheet] ~href:"style.css" ();]
+      )
+      (body [
+           header [
+               h1 [pcdata "Homepage"];
+             ];
+           div [
+               h2 [pcdata "Articles"];
+               ul (List.map link_item titles);
+             ];
+      ])
+  in
+  Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml

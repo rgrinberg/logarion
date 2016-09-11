@@ -26,10 +26,20 @@ type ymd_t = {
 
 open Str
 
+let load_file f =
+  let ic = open_in f in
+  let n = in_channel_length ic in
+  let s = String.create n in
+  really_input ic s 0 n;
+  close_in ic;
+  (s)
+
 let log_meta_field line =
   let e = bounded_split (regexp ": *") line 2 in
-  (List.nth e 0, List.nth e 1)
-
+  if List.length e = 2
+  then (List.nth e 0, List.nth e 1)
+  else (line, "")
+         
 let log_meta yaml =
   let lines = split (regexp "\n") yaml in
   let fields = List.map log_meta_field lines in
@@ -45,9 +55,13 @@ let log_meta yaml =
   List.fold_left field_map m fields
 
 let ymd s =
-  let segments = bounded_split (regexp "^---$") s 3 in
+  let segments = bounded_split (regexp "^---$") (load_file s) 3 in
   let yaml_str = List.nth segments 0 in
   let md_str = List.nth segments 1 in
-  Printf.printf "%s" yaml_str;
   let m = log_meta yaml_str in
   { meta = m; text = md_str }
+
+let ymd_titles () =
+  let ymds = Array.to_list @@ Sys.readdir "ymd/" in
+  let t y = (ymd ("ymd/" ^ y)).meta.title in
+  List.map t ymds
