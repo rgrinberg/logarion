@@ -39,3 +39,50 @@ let html_of_titles titles =
       ])
   in
   Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml
+
+let html_of_form ymd =
+  let open Tyxml.Html in
+  let tyhtml =
+    html
+      (head
+         (title (pcdata "Write post"))
+         [link ~rel:[`Stylesheet] ~href:"style.css" ();]
+      )
+      (body [
+           header [
+               h1 [pcdata "Create new article"];
+             ];
+           div [
+               form
+                 ~a:[a_formmethod `Post]
+                 [
+                   fieldset
+                     ~legend:(legend [pcdata "Create new article"])
+                     [
+                       p [
+                           label [
+                               span [pcdata "Title"];
+                               input ~a:[a_name "title"] ()
+                             ];
+                         ];
+                       p [
+                           label [
+                               span [pcdata "Author"];
+                               input ~a:[a_name "author"] ();
+                             ];
+                         ];
+                       p [
+                           label [
+                               span [pcdata"Text"];
+                               textarea ~a:[a_name "text"] (pcdata "");
+                             ];
+                         ];
+                       p [
+                           button ~a:[a_button_type `Submit] [pcdata "Submit"];
+                         ];
+                     ]
+                 ]
+             ];
+      ])
+  in
+  Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml

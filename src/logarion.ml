@@ -26,6 +26,16 @@ type ymd_t = {
 
 open Str
 
+let blank_ymd_meta = {
+    title = ""; author = { name = ""; email = "" };
+    dates = { edited = 0.0; published = 0.0 };
+    categories = []; topics = []; keywords = []; series = [];
+    abstract = ""
+  }
+
+let blank_ymd =
+  { meta = blank_ymd_meta; text = "" }
+
 let load_file f =
   let ic = open_in f in
   let n = in_channel_length ic in
@@ -43,16 +53,12 @@ let log_meta_field line =
 let log_meta yaml =
   let lines = split (regexp "\n") yaml in
   let fields = List.map log_meta_field lines in
-  let m = { title = ""; author = { name = ""; email = "" };
-            dates= { edited = 0.0; published = 0.0 };
-            categories = []; topics = []; keywords = []; series = [];
-            abstract = "" } in
   let field_map meta (k,v) = match k with
     | "title" -> { meta with title = v }
     | "abstract" -> { meta with abstract = v }
     | _ -> meta
   in
-  List.fold_left field_map m fields
+  List.fold_left field_map blank_ymd_meta fields
 
 let ymd s =
   let segments = bounded_split (regexp "^---$") (load_file s) 3 in
