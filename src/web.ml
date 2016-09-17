@@ -1,7 +1,7 @@
 open Opium.Std
 
 let sanitised_path path =
-  let parent = Str.regexp "\.\./" in
+  let parent = Str.regexp "../" in
   Str.global_replace parent "" path
 
 let print_css =
@@ -24,14 +24,22 @@ let print_form =
       `Html (Html.html_of_form (Logarion.blank_ymd)) |> respond'
       end
 
+let ymd_of_body_pairs pairs =
+  let open Logarion in
+  let field_of_pair ymd (key, value) = match key with
+    | "title"  -> { ymd with meta = { ymd.meta with title  = List.hd value } }
+    | "author" -> { ymd with meta = { ymd.meta with author = { ymd.meta.author with name = List.hd value } } }
+    | "text"   -> { ymd with text = List.hd value }
+    | _ -> ymd
+  in
+  ListLabels.fold_left ~f:field_of_pair ~init:blank_ymd pairs
+
 let process_form =
   post "/()/new"
        begin fun req ->
-       let title = param req "title"
-       and author= param req "author"
-       and text  = param req "text" in
-       let ymd = Logarion.blank_ymd in
-       `Html (Html.html_of ymd) |> respond'
+       let pairs = Lwt_main.run @@ App.urlencoded_pairs_of_body req in
+       let open Logarion in
+       `Html (Html.html_of (ymd_of_body_pairs pairs)) |> respond'
        end
 
 let print_toc =
@@ -41,6 +49,7 @@ let _ =
   App.empty
   |> print_ymd
   |> print_form
+  |> process_form
   |> print_css
   |> print_toc
   |> App.run_command
