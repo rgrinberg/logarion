@@ -6,7 +6,7 @@ let html_of ymd =
     html
       (head
          (title (Unsafe.data ymd_title))
-         [link ~rel:[`Stylesheet] ~href:"style.css" ();]
+         [link ~rel:[`Stylesheet] ~href:"/style.css" ();]
       )
       (body [
            header [
@@ -26,7 +26,7 @@ let html_of_titles titles =
     html
       (head
          (title (pcdata "Homepage"))
-         [link ~rel:[`Stylesheet] ~href:"style.css" ();]
+         [link ~rel:[`Stylesheet] ~href:"/style.css" ();]
       )
       (body [
            header [
@@ -46,7 +46,7 @@ let html_of_form ymd =
     html
       (head
          (title (pcdata "Write post"))
-         [link ~rel:[`Stylesheet] ~href:"style.css" ();]
+         [link ~rel:[`Stylesheet] ~href:"/style.css" ();]
       )
       (body [
            header [
@@ -54,7 +54,7 @@ let html_of_form ymd =
              ];
            div [
                form
-                 ~a:[a_formmethod `Post]
+                 ~a:[a_method `Post; a_action (uri_of_string "/()/new")]
                  [
                    fieldset
                      ~legend:(legend [pcdata "Create new article"])
