@@ -28,8 +28,8 @@ let ymd_of_body_pairs pairs =
   let open Logarion in
   let open Lens.Infix in
   let field_of_pair ymd (key, value) = match key with
-    | "title"  -> { ymd with meta = { ymd.meta with title  = List.hd value } }
-    (*  | "author" -> ((ymd_t_meta |-- log_meta_t_author |-- author_t_name_t) ^= List.hd value) ymd *)
+    | "title"  -> ((ymd_meta |-- meta_title  |-- title ^= List.hd value) ymd
+    | "author" -> ((ymd_meta |-- meta_author |-- author_name) ^= List.hd value) ymd
     | "text"   -> { ymd with body = List.hd value }
     | _ -> ymd
   in

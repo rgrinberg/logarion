@@ -12,4 +12,6 @@ html.cmx: src/html.ml logarion.cmx
 	logarion.cmx src/html.ml
 
 logarion.cmx: src/logarion.ml
-	ocamlfind ocamlopt -c -o logarion.cmx -linkpkg -package omd,lens src/logarion.ml
+	ocamlfind ocamlopt -c -o logarion.cmx -linkpkg \
+	-package omd,lens,lens.ppx_deriving \
+	src/logarion.ml
