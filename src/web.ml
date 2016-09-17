@@ -28,19 +28,24 @@ let ymd_of_body_pairs pairs =
   let open Logarion in
   let open Lens.Infix in
   let field_of_pair ymd (key, value) = match key with
-    | "title"  -> ((ymd_meta |-- meta_title  |-- title ^= List.hd value) ymd
+    | "title"  -> ((ymd_meta |-- meta_title) ^= List.hd value) ymd
     | "author" -> ((ymd_meta |-- meta_author |-- author_name) ^= List.hd value) ymd
     | "text"   -> { ymd with body = List.hd value }
     | _ -> ymd
   in
   ListLabels.fold_left ~f:field_of_pair ~init:blank_ymd pairs
+  |> ((ymd_meta |-- meta_date |-- date_edited) ^= Some (Ptime_clock.now ()))
 
 let process_form =
   post "/()/new"
        begin fun req ->
        let pairs = Lwt_main.run @@ App.urlencoded_pairs_of_body req in
        let open Logarion in
-       `Html (Html.html_of (ymd_of_body_pairs pairs)) |> respond'
+       let ymd = ymd_of_body_pairs pairs in
+       let oc = open_out "ymd/saved.ymd" in
+       Printf.fprintf oc "%s" (to_string ymd);
+       close_out oc;
+       `Html (Html.html_of ymd) |> respond'
        end
 
 let print_toc =

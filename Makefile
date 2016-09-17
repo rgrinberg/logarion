@@ -3,7 +3,7 @@ all: web
 
 web: logarion.cmx html.cmx src/web.ml
 	ocamlfind ocamlopt -o logarion-web -linkpkg \
-	-package opium.unix,omd,str,tyxml,lens \
+	-package opium.unix,omd,str,tyxml,lens,ptime,ptime.clock.os \
 	logarion.cmx html.cmx src/web.ml
 
 html.cmx: src/html.ml logarion.cmx
@@ -13,5 +13,5 @@ html.cmx: src/html.ml logarion.cmx
 
 logarion.cmx: src/logarion.ml
 	ocamlfind ocamlopt -c -o logarion.cmx -linkpkg \
-	-package omd,lens,lens.ppx_deriving \
+	-package omd,lens,lens.ppx_deriving,ptime \
 	src/logarion.ml
