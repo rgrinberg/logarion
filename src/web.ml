@@ -15,7 +15,7 @@ let print_ymd =
       begin fun req ->
       let filename = sanitised_path (param req "title") in
       let filepath = "ymd/" ^ filename ^ ".ymd" in
-      `Html (Html.html_of (Logarion.ymd filepath)) |> respond'
+      `Html (Html.html_of (Logarion.of_file filepath)) |> respond'
       end
 
 let print_form =
@@ -26,10 +26,11 @@ let print_form =
 
 let ymd_of_body_pairs pairs =
   let open Logarion in
+  let open Lens.Infix in
   let field_of_pair ymd (key, value) = match key with
     | "title"  -> { ymd with meta = { ymd.meta with title  = List.hd value } }
-    | "author" -> { ymd with meta = { ymd.meta with author = { ymd.meta.author with name = List.hd value } } }
-    | "text"   -> { ymd with text = List.hd value }
+    (*  | "author" -> ((ymd_t_meta |-- log_meta_t_author |-- author_t_name_t) ^= List.hd value) ymd *)
+    | "text"   -> { ymd with body = List.hd value }
     | _ -> ymd
   in
   ListLabels.fold_left ~f:field_of_pair ~init:blank_ymd pairs
@@ -43,7 +44,7 @@ let process_form =
        end
 
 let print_toc =
-  get "/" begin fun req -> `Html (Html.html_of_titles (Logarion.ymd_titles ())) |> respond' end
+  get "/" begin fun req -> `Html (Html.html_of_titles (Logarion.titles ())) |> respond' end
 
 let _ =
   App.empty

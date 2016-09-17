@@ -1,6 +1,6 @@
 let html_of ymd =
   let ymd_title = ymd.Logarion.meta.title in
-  let ymd_body = Omd.to_html (Omd.of_string ymd.Logarion.text) in
+  let ymd_body = Omd.to_html (Omd.of_string ymd.Logarion.body) in
   let open Tyxml.Html in
   let tyhtml =
     html
