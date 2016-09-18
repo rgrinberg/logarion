@@ -67,10 +67,41 @@ let html_of_form ymd =
                          ];
                        p [
                            label [
-                               span [pcdata "Author"];
-                               input ~a:[a_name "author"] ();
+                               span [pcdata "Author name"];
+                               input ~a:[a_name "author_name"] ();
                              ];
                          ];
+                       p [
+                           label [
+                               span [pcdata "Author email"];
+                               input ~a:[a_name "author_email"] ();
+                             ];
+                         ];
+                       p [
+                           label [
+                               span [pcdata "Topics"];
+                               input ~a:[a_name "topics"] ();
+                             ];
+                         ];
+                       p [
+                           label [
+                               span [pcdata "Categories"];
+                               input ~a:[a_name "categories"] ();
+                             ];
+                         ];
+                       p [
+                           label [
+                               span [pcdata "Series"];
+                               input ~a:[a_name "series"] ();
+                             ];
+                         ];
+                       p [
+                           label [
+                               span [pcdata "Abstract"];
+                               input ~a:[a_name "abstract"] ();
+                             ];
+                         ];
+
                        p [
                            label [
                                span [pcdata"Text"];

@@ -52,15 +52,24 @@ let meta_field line =
   then (List.nth e 0, List.nth e 1)
   else (line, "")
 
+let of_rfc v = match Ptime.of_rfc3339 v with Ok (t,_,_) -> Some t | Error _ -> None;;
+
 let meta_of_yaml yaml =
   let lines = split (regexp "\n") yaml in
   let fields = List.map meta_field lines in
   let open Lens.Infix in
   let field_map meta (k,v) = match k with
-    | "title" -> { meta with title = v }
-    | "abstract" -> { meta with abstract = v }
-    | "published" -> ((meta_date |-- date_published) ^=
-                        (match Ptime.of_rfc3339 v with Ok (t,_,_) -> Some t | Error _ -> None )) meta
+    | "title"     -> { meta with title  = v }
+    | "name"      -> ((meta_author |-- author_name ) ^= v) meta
+    | "email"     -> ((meta_author |-- author_email) ^= v) meta
+    | "abstract"  -> { meta with abstract = v }
+    | "published" -> ((meta_date |-- date_published) ^= of_rfc v) meta
+    | "edited"    -> ((meta_date |-- date_edited   ) ^= of_rfc v) meta
+    | "topics"    -> { meta with topics   = split (regexp ",") v }
+    | "keywords"  -> { meta with keywords = split (regexp ",") v }
+    | "categories"-> { meta with categories = split (regexp ",") v }
+    | "series"    -> { meta with series   = split (regexp ",") v }
+    | "abstraact" -> { meta with abstract = v }
     | _ -> meta
   in
   List.fold_left field_map blank_meta fields
@@ -86,8 +95,10 @@ let to_string ymd =
              "\ndate:";
              "\n  edited: ";    str_of_ptime ymd.meta.date.edited;
              "\n  published: "; str_of_ptime ymd.meta.date.published;
-             "\ncategories: ";  String.concat ", " ymd.meta.categories;
-             "\ntopics: "; String.concat ", " ymd.meta.topics;
+             "\ntopics: ";     String.concat ", " ymd.meta.topics;
+             "\ncategories: "; String.concat ", " ymd.meta.categories;
+             "\nkeywords: ";   String.concat ", " ymd.meta.keywords;
+             "\nabstract: ";   ymd.meta.abstract;
              "\n---\n"; ymd.body;
            ];
   Buffer.contents buf
