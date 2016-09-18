@@ -91,6 +91,12 @@ let html_of_form ymd =
                          ];
                        p [
                            label [
+                               span [pcdata "Keywords"];
+                               input ~a:[a_name "keywords"] ();
+                             ];
+                         ];
+                       p [
+                           label [
                                span [pcdata "Series"];
                                input ~a:[a_name "series"] ();
                              ];
