@@ -109,6 +109,10 @@ let to_string ymd =
   Buffer.contents buf
 
 let titles () =
-  let ymds = Array.to_list @@ Sys.readdir "ymd/" in
+  let files = Array.to_list @@ Sys.readdir "ymd/" in
+  let ymds = List.fold_left
+               (fun a e -> if BatString.ends_with e ".ymd" then List.cons e a else a)
+               []
+               files in
   let t y = (of_file ("ymd/" ^ y)).meta.title in
   List.map t ymds
