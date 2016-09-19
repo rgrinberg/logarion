@@ -27,9 +27,9 @@ let print_form =
 let ymd_of_body_pairs pairs =
   let open Logarion in
   let open Lens.Infix in
-  let normal v = v |> List.hd |> BatString.trim in
+  let normal v = v |> List.hd |> trim_str in
   let of_str y k v = (k ^= normal v) y in
-  let of_str_list y k v = (k ^= Str.split (Str.regexp " *, *") (normal v)) y in
+  let of_str_list y k v = (k ^= list_of_csv (normal v)) y in
   let field_of_pair ymd (key, value) = match key with
     | "title"        -> of_str ymd (ymd_meta |-- meta_title) value
     | "author_name"  -> of_str ymd (ymd_meta |-- meta_author |-- author_name) value

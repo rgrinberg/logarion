@@ -26,8 +26,6 @@ type ymd = {
     body: string;
   } [@@deriving lens]
 
-open Str
-
 let blank_meta = {
     title = ""; author = { name = ""; email = "" };
     date = { edited = None; published = None };
@@ -46,40 +44,47 @@ let load_file f =
   close_in ic;
   (s)
 
-let meta_field line =
-  let e = bounded_split (regexp ": *") line 2 in
-  if List.length e = 2
-  then (List.nth e 0, List.nth e 1)
-  else (line, "")
 
 let of_rfc v = match Ptime.of_rfc3339 v with Ok (t,_,_) -> Some t | Error _ -> None;;
+let trim_str v = v |> String.trim
+let list_of_csv = Re_str.(split (regexp " *, *"))
+let of_str y k v = Lens.Infix.(k ^= trim_str v) y
+let of_str_list y k v = Lens.Infix.(k ^= list_of_csv (trim_str v)) y
+
+let meta_field line =
+  let e = Re_str.(bounded_split (regexp ": *")) line 2 in
+  if List.length e = 2
+  then (Re_str.(replace_first (regexp "^[ -] ") "" (List.nth e 0)), List.nth e 1)
+  else (Re_str.(replace_first (regexp "^[ -] ") "" line), "")
 
 let meta_of_yaml yaml =
-  let lines = split (regexp "\n") yaml in
-  let fields = List.map meta_field lines in
+  let fields = List.map meta_field (BatString.nsplit yaml "\n") in
   let open Lens.Infix in
   let field_map meta (k,v) = match k with
-    | "title"     -> { meta with title  = v }
-    | "name"      -> ((meta_author |-- author_name ) ^= v) meta
-    | "email"     -> ((meta_author |-- author_email) ^= v) meta
-    | "abstract"  -> { meta with abstract = v }
+    | "title"     -> of_str meta (meta_title) v
+    | "name"      -> of_str meta (meta_author |-- author_name ) v
+    | "email"     -> of_str meta (meta_author |-- author_email) v
+    | "abstract"  -> of_str meta meta_abstract v
     | "published" -> ((meta_date |-- date_published) ^= of_rfc v) meta
     | "edited"    -> ((meta_date |-- date_edited   ) ^= of_rfc v) meta
-    | "topics"    -> { meta with topics   = split (regexp ",") v }
-    | "keywords"  -> { meta with keywords = split (regexp ",") v }
-    | "categories"-> { meta with categories = split (regexp ",") v }
-    | "series"    -> { meta with series   = split (regexp ",") v }
-    | "abstraact" -> { meta with abstract = v }
-    | _ -> meta
+    | "topics"    -> of_str_list meta meta_topics v
+    | "keywords"  -> of_str_list meta meta_keywords v
+    | "categories"-> of_str_list meta meta_categories v
+    | "series"    -> of_str_list meta meta_series v
+    | "abstract"  -> of_str meta meta_abstract v
+    | k -> meta
   in
   List.fold_left field_map blank_meta fields
 
 let of_file s =
-  let segments = bounded_split (regexp "^---$") (load_file s) 3 in
-  let yaml_str = List.nth segments 0 in
-  let md_str = List.nth segments 1 in
-  let m = meta_of_yaml yaml_str in
-  { meta = m; body = md_str }
+  let segments = Re_str.(split (regexp "^---$")) (load_file s) in
+  if List.length segments = 2 then
+    let yaml_str = List.nth segments 0 in
+    let md_str = List.nth segments 1 in
+    let m = meta_of_yaml yaml_str in
+    { meta = m; body = md_str }
+  else
+    { blank_ymd with body = "Error parsing file" }
 
 let to_string ymd =
   let buf = Buffer.create (String.length ymd.body + 256) in
@@ -102,7 +107,6 @@ let to_string ymd =
              "\n---\n"; ymd.body;
            ];
   Buffer.contents buf
-
 
 let titles () =
   let ymds = Array.to_list @@ Sys.readdir "ymd/" in
