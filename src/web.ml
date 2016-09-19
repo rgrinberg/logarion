@@ -27,19 +27,19 @@ let print_form =
 let ymd_of_body_pairs pairs =
   let open Logarion in
   let open Lens.Infix in
-  let of_str y k v = (k ^= List.hd v) y in
-  let of_str_list y k v = (k ^= Str.split (Str.regexp ",") (List.hd v)) y in
-  let of_text y k v = (k ^= List.hd v) y in
+  let normal v = v |> List.hd |> BatString.trim in
+  let of_str y k v = (k ^= normal v) y in
+  let of_str_list y k v = (k ^= Str.split (Str.regexp " *, *") (normal v)) y in
   let field_of_pair ymd (key, value) = match key with
     | "title"        -> of_str ymd (ymd_meta |-- meta_title) value
     | "author_name"  -> of_str ymd (ymd_meta |-- meta_author |-- author_name) value
     | "author_email" -> of_str ymd (ymd_meta |-- meta_author |-- author_email) value
-    | "publish_date" -> ((ymd_meta |-- meta_date |-- date_published) ^= of_rfc (List.hd value)) ymd
+    | "publish_date" -> ((ymd_meta |-- meta_date |-- date_published) ^= of_rfc (normal value)) ymd
     | "topics"       -> of_str_list ymd (ymd_meta |-- meta_topics) value
     | "categories"   -> of_str_list ymd (ymd_meta |-- meta_categories) value
     | "keywords"     -> of_str_list ymd (ymd_meta |-- meta_keywords) value
     | "series"       -> of_str_list ymd (ymd_meta |-- meta_series) value
-    | "abstract"     -> of_text ymd (ymd_meta |-- meta_abstract) value
+    | "abstract"     -> of_str ymd (ymd_meta |-- meta_abstract) value
     | "text"   -> of_str ymd (ymd_body) value
     | _ -> ymd
   in
