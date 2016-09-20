@@ -1,16 +1,16 @@
+open Tyxml.Html
+
+let logarion_head ?(style="/style.css") t =
+  head (title (pcdata t)) [link ~rel:[`Stylesheet] ~href:"/style.css" ()]
+       
 let html_of ymd =
   let ymd_title = Logarion.(ymd.meta.title) in
   let ymd_date = match Logarion.(ymd.meta.date.published) with
     | Some t -> Some t
     | None -> Logarion.(ymd.meta.date.edited) in
   let ymd_body = Omd.to_html (Omd.of_string Logarion.(ymd.body)) in
-  let open Tyxml.Html in
   let tyhtml =
-    html
-      (head
-         (title (Unsafe.data ymd_title))
-         [link ~rel:[`Stylesheet] ~href:"/style.css" ();]
-      )
+    html (logarion_head ymd_title)
       (body [
            header [
                h1 [Unsafe.data ymd_title];
@@ -25,14 +25,9 @@ let html_of ymd =
   Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml
 
 let html_of_titles titles =
-  let open Tyxml.Html in
   let link_item x = li [a ~a:[a_href ("/" ^ x)] [Unsafe.data x]] in
   let tyhtml =
-    html
-      (head
-         (title (pcdata "Homepage"))
-         [link ~rel:[`Stylesheet] ~href:"/style.css" ();]
-      )
+    html (logarion_head "Homepage")
       (body [
            header [
                h1 [pcdata "Homepage"];
@@ -46,13 +41,8 @@ let html_of_titles titles =
   Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml
 
 let html_of_form ymd =
-  let open Tyxml.Html in
   let tyhtml =
-    html
-      (head
-         (title (pcdata "Write post"))
-         [link ~rel:[`Stylesheet] ~href:"/style.css" ();]
-      )
+    html (logarion_head "Compose")
       (body [
            header [
                h1 [pcdata "Create new article"];
