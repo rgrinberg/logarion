@@ -15,7 +15,7 @@ let html_of ymd =
            header [
                h1 [Unsafe.data ymd_title];
                details
-                 (summary [Unsafe.data ymd.Logarion.meta.abstract])
+                 (summary [Unsafe.data Logarion.(ymd.meta.abstract)])
                  [time ~a:[a_datetime (Logarion.(to_rfc ymd_date))] []];
              ];
            Unsafe.data ymd_body;
