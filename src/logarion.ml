@@ -44,7 +44,7 @@ let load_file f =
   close_in ic;
   (s)
 
-
+let to_rfc v = match v with Some t -> Ptime.to_rfc3339 t | None -> "";;
 let of_rfc v = match Ptime.of_rfc3339 v with Ok (t,_,_) -> Some t | Error _ -> None;;
 let trim_str v = v |> String.trim
 let list_of_csv = Re_str.(split (regexp " *, *"))
