@@ -15,3 +15,6 @@ logarion.cmx: src/logarion.ml
 	ocamlfind ocamlopt -c -o logarion.cmx -linkpkg \
 	-package batteries,omd,lens,lens.ppx_deriving,ptime,re \
 	src/logarion.ml
+
+clean:
+	rm -f src/*.{cmx,cmi,o} *.{cmx,cmi,o}
