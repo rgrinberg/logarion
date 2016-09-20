@@ -39,79 +39,41 @@ let html_of_titles titles =
   Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml
 
 let html_of_form ymd =
+  let input_set t n =
+    p [ label [
+            span [pcdata t];
+            input ~a:[a_name n] ()
+      ]]
+  in
   let tyhtml =
     html (logarion_head "Compose")
-      (body [
-           header [
-               h1 [pcdata "Create new article"];
-             ];
-           div [
-               form
-                 ~a:[a_method `Post; a_action (uri_of_string "/()/new")]
-                 [
-                   fieldset
-                     ~legend:(legend [pcdata "Create new article"])
-                     [
-                       p [
-                           label [
-                               span [pcdata "Title"];
-                               input ~a:[a_name "title"] ()
-                             ];
-                         ];
-                       p [
-                           label [
-                               span [pcdata "Author name"];
-                               input ~a:[a_name "author_name"] ();
-                             ];
-                         ];
-                       p [
-                           label [
-                               span [pcdata "Author email"];
-                               input ~a:[a_name "author_email"] ();
-                             ];
-                         ];
-                       p [
-                           label [
-                               span [pcdata "Topics"];
-                               input ~a:[a_name "topics"] ();
-                             ];
-                         ];
-                       p [
-                           label [
-                               span [pcdata "Categories"];
-                               input ~a:[a_name "categories"] ();
-                             ];
-                         ];
-                       p [
-                           label [
-                               span [pcdata "Keywords"];
-                               input ~a:[a_name "keywords"] ();
-                             ];
-                         ];
-                       p [
-                           label [
-                               span [pcdata "Series"];
-                               input ~a:[a_name "series"] ();
-                             ];
-                         ];
-                       p [
-                           label [
-                               span [pcdata "Abstract"];
-                               input ~a:[a_name "abstract"] ();
-                             ];
-                         ];
-                       p [
-                           label [
-                               span [pcdata"Text"];
-                               textarea ~a:[a_name "text"] (pcdata "");
-                             ];
-                         ];
-                       p [
-                           button ~a:[a_button_type `Submit] [pcdata "Submit"];
-                         ];
-                     ]
-                 ]
-             ];
-      ])
+         (body [
+              header [ h1 [pcdata "Create new article"] ];
+              div [
+                  form
+                    ~a:[a_method `Post; a_action (uri_of_string "/()/new")]
+                    [
+                      fieldset
+                        ~legend:(legend [pcdata "Create new article"])
+                        [
+                          input_set "Title" "title";
+                          input_set "Author name" "author_name";
+                          input_set "Author email" "author_email";
+                          input_set "Topics" "topics";
+                          input_set "Categories" "categories";
+                          input_set "Keywords" "keywords";
+                          input_set "Series" "series";
+                          input_set "Abstract" "abstract";
+                          p [
+                              label [
+                                  span [pcdata"Text"];
+                                  textarea ~a:[a_name "text"] (pcdata "");
+                                ];
+                            ];
+                          p [ button ~a:[a_button_type `Submit] [pcdata "Submit"] ];
+                        ]
+                    ]
+                ];
+         ])
   in
   Format.asprintf "%a" (Tyxml.Html.pp ()) tyhtml
