@@ -22,8 +22,8 @@ let of_ymd ymd =
        ])
   |> Format.asprintf "%a" (Tyxml.Html.pp ())
 
-let of_titles titles =
-  let link_item x = li [a ~a:[a_href ("/" ^ x)] [Unsafe.data x]] in
+let of_titled_files titles =
+  let link_item (y,t) = li [a ~a:[a_href ("/" ^ Filename.chop_extension y)] [Unsafe.data t]] in
   html (logarion_head "Homepage")
        (body [
             header [ h1 [pcdata "Homepage"] ];

@@ -118,11 +118,9 @@ let to_file ymd =
   Printf.fprintf oc "%s" (to_string ymd);
   close_out oc
 
-let titles () =
+let titled_files () =
   let files = Array.to_list @@ Sys.readdir "ymd/" in
-  let ymds = List.fold_left
-               (fun a e -> if BatString.ends_with e ".ymd" then List.cons e a else a)
-               []
-               files in
-  let t y = (of_file ("ymd/" ^ y)).meta.title in
+  let ymd_list a e =  if BatString.ends_with e ".ymd" then List.cons e a else a in
+  let ymds = List.fold_left ymd_list [] files in
+  let t y = (y, (of_file ("ymd/" ^ y)).meta.title) in
   List.map t ymds

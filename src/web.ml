@@ -57,7 +57,7 @@ let process_form =
        end
 
 let print_toc =
-  get "/" begin fun req -> `Html (Html.of_titles (Logarion.titles ())) |> respond' end
+  get "/" begin fun req -> `Html (Html.of_titled_files (Logarion.titled_files ())) |> respond' end
 
 let _ =
   App.empty
