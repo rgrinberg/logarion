@@ -29,9 +29,7 @@ let html_of_titles titles =
   let tyhtml =
     html (logarion_head "Homepage")
       (body [
-           header [
-               h1 [pcdata "Homepage"];
-             ];
+           header [ h1 [pcdata "Homepage"] ];
            div [
                h2 [pcdata "Articles"];
                ul (List.map link_item titles);
