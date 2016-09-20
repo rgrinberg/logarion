@@ -1,9 +1,9 @@
 let html_of ymd =
-  let ymd_title = ymd.Logarion.meta.title in
-  let ymd_date = match ymd.Logarion.meta.date.published with
+  let ymd_title = Logarion.(ymd.meta.title) in
+  let ymd_date = match Logarion.(ymd.meta.date.published) with
     | Some t -> Some t
-    | None -> ymd.Logarion.meta.date.edited in
-  let ymd_body = Omd.to_html (Omd.of_string ymd.Logarion.body) in
+    | None -> Logarion.(ymd.meta.date.edited) in
+  let ymd_body = Omd.to_html (Omd.of_string Logarion.(ymd.body)) in
   let open Tyxml.Html in
   let tyhtml =
     html
