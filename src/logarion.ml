@@ -71,8 +71,7 @@ let meta_of_yaml yaml =
     | "keywords"  -> of_str_list meta meta_keywords v
     | "categories"-> of_str_list meta meta_categories v
     | "series"    -> of_str_list meta meta_series v
-    | "abstract"  -> of_str meta meta_abstract v
-    | k -> meta
+    | _ -> meta
   in
   List.fold_left field_map blank_meta fields
 
