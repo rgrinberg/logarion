@@ -15,13 +15,13 @@ let print_ymd =
       begin fun req ->
       let filename = sanitised_path (param req "title") in
       let filepath = "ymd/" ^ filename ^ ".ymd" in
-      `Html (Html.html_of (Logarion.of_file filepath)) |> respond'
+      `Html (Html.of_ymd (Logarion.of_file filepath)) |> respond'
       end
 
 let print_form =
   get "/()/new"
       begin fun req ->
-      `Html (Html.html_of_form (Logarion.blank_ymd)) |> respond'
+      `Html (Html.form (Logarion.blank_ymd)) |> respond'
       end
 
 let ymd_of_body_pairs pairs =
@@ -55,11 +55,11 @@ let process_form =
        let oc = open_out "ymd/saved.ymd" in
        Printf.fprintf oc "%s" (to_string ymd);
        close_out oc;
-       `Html (Html.html_of ymd) |> respond'
+       `Html (Html.of_ymd ymd) |> respond'
        end
 
 let print_toc =
-  get "/" begin fun req -> `Html (Html.html_of_titles (Logarion.titles ())) |> respond' end
+  get "/" begin fun req -> `Html (Html.of_titles (Logarion.titles ())) |> respond' end
 
 let _ =
   App.empty

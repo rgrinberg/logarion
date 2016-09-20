@@ -3,7 +3,7 @@ open Tyxml.Html
 let logarion_head ?(style="/style.css") t =
   head (title (pcdata t)) [link ~rel:[`Stylesheet] ~href:"/style.css" ()]
        
-let html_of ymd =
+let of_ymd ymd =
   let ymd_title = Logarion.(ymd.meta.title) in
   let ymd_date = match Logarion.(ymd.meta.date.published) with
     | Some t -> Some t
@@ -22,7 +22,7 @@ let html_of ymd =
        ])
   |> Format.asprintf "%a" (Tyxml.Html.pp ())
 
-let html_of_titles titles =
+let of_titles titles =
   let link_item x = li [a ~a:[a_href ("/" ^ x)] [Unsafe.data x]] in
   html (logarion_head "Homepage")
        (body [
@@ -34,7 +34,7 @@ let html_of_titles titles =
        ])
   |> Format.asprintf "%a" (Tyxml.Html.pp ())
 
-let html_of_form ymd =
+let form ymd =
   let input_set t n =
     p [ label [
             span [pcdata t];
