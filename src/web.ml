@@ -52,9 +52,7 @@ let process_form =
        let pairs = Lwt_main.run @@ App.urlencoded_pairs_of_body req in
        let open Logarion in
        let ymd = ymd_of_body_pairs pairs in
-       let oc = open_out "ymd/saved.ymd" in
-       Printf.fprintf oc "%s" (to_string ymd);
-       close_out oc;
+       to_file ymd;
        `Html (Html.of_ymd ymd) |> respond'
        end
 

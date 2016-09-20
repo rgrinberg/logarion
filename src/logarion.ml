@@ -51,6 +51,12 @@ let list_of_csv = Re_str.(split (regexp " *, *"))
 let of_str y k v = Lens.Infix.(k ^= trim_str v) y
 let of_str_list y k v = Lens.Infix.(k ^= list_of_csv (trim_str v)) y
 
+let filename_of_title t =
+  let sub c = match c with ' ' -> '_' | '/' -> '-' | c -> c in
+  String.map sub t ^ ".ymd"
+
+let filename ymd = filename_of_title ymd.meta.title
+
 let meta_field line =
   let e = Re_str.(bounded_split (regexp ": *")) line 2 in
   if List.length e = 2
@@ -75,6 +81,28 @@ let meta_of_yaml yaml =
   in
   List.fold_left field_map blank_meta fields
 
+let to_string ymd =
+  let buf = Buffer.create (String.length ymd.body + 256) in
+  let buf_acc = Buffer.add_string buf in
+  let str_of_ptime time = match time with
+    | Some t -> Ptime.to_rfc3339 t | None -> "" in
+  List.iter buf_acc [
+              "---\n";
+              "title: ";   ymd.meta.title;
+              "\nauthors:";
+              "\n- name: ";  ymd.meta.author.name;
+              "\n  email: "; ymd.meta.author.email;
+              "\ndate:";
+              "\n  edited: ";    str_of_ptime ymd.meta.date.edited;
+              "\n  published: "; str_of_ptime ymd.meta.date.published;
+              "\ntopics: ";     String.concat ", " ymd.meta.topics;
+              "\ncategories: "; String.concat ", " ymd.meta.categories;
+              "\nkeywords: ";   String.concat ", " ymd.meta.keywords;
+              "\nabstract: ";   ymd.meta.abstract;
+              "\n---\n"; ymd.body;
+            ];
+  Buffer.contents buf
+
 let of_file s =
   let segments = Re_str.(split (regexp "^---$")) (load_file s) in
   if List.length segments = 2 then
@@ -85,27 +113,10 @@ let of_file s =
   else
     { blank_ymd with body = "Error parsing file" }
 
-let to_string ymd =
-  let buf = Buffer.create (String.length ymd.body + 256) in
-  let buf_acc = Buffer.add_string buf in
-  let str_of_ptime time = match time with
-    | Some t -> Ptime.to_rfc3339 t | None -> "" in
-  List.iter buf_acc [
-             "---\n";
-             "title: ";   ymd.meta.title;
-             "\nauthors:";
-             "\n- name: ";  ymd.meta.author.name;
-             "\n  email: "; ymd.meta.author.email;
-             "\ndate:";
-             "\n  edited: ";    str_of_ptime ymd.meta.date.edited;
-             "\n  published: "; str_of_ptime ymd.meta.date.published;
-             "\ntopics: ";     String.concat ", " ymd.meta.topics;
-             "\ncategories: "; String.concat ", " ymd.meta.categories;
-             "\nkeywords: ";   String.concat ", " ymd.meta.keywords;
-             "\nabstract: ";   ymd.meta.abstract;
-             "\n---\n"; ymd.body;
-           ];
-  Buffer.contents buf
+let to_file ymd =
+  let oc = open_out ("ymd/" ^ (filename ymd))  in
+  Printf.fprintf oc "%s" (to_string ymd);
+  close_out oc
 
 let titles () =
   let files = Array.to_list @@ Sys.readdir "ymd/" in
