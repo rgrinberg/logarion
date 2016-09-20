@@ -91,7 +91,7 @@ let to_string ymd =
   let buf_acc = Buffer.add_string buf in
   let str_of_ptime time = match time with
     | Some t -> Ptime.to_rfc3339 t | None -> "" in
-  List.map buf_acc [
+  List.iter buf_acc [
              "---\n";
              "title: ";   ymd.meta.title;
              "\nauthors:";
