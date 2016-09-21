@@ -4,18 +4,18 @@ let logarion_head ?(style="/style.css") t =
   head (title (pcdata t)) [link ~rel:[`Stylesheet] ~href:"/style.css" ()]
        
 let of_ymd ymd =
-  let ymd_title = Logarion.(ymd.meta.title) in
-  let ymd_date = match Logarion.(ymd.meta.date.published) with
+  let ymd_title = Ymd.(ymd.meta.title) in
+  let ymd_date = match Ymd.(ymd.meta.date.published) with
     | Some t -> Some t
-    | None -> Logarion.(ymd.meta.date.edited) in
-  let ymd_body = Omd.to_html (Omd.of_string Logarion.(ymd.body)) in
+    | None -> Ymd.(ymd.meta.date.edited) in
+  let ymd_body = Omd.to_html (Omd.of_string Ymd.(ymd.body)) in
   html (logarion_head ymd_title)
        (body [
             header [
                 h1 [Unsafe.data ymd_title];
                 details
-                  (summary [Unsafe.data Logarion.(ymd.meta.abstract)])
-                  [time ~a:[a_datetime (Logarion.(to_rfc ymd_date))] []];
+                  (summary [Unsafe.data Ymd.(ymd.meta.abstract)])
+                  [time ~a:[a_datetime (Ymd.(to_rfc ymd_date))] []];
               ];
             Unsafe.data ymd_body;
             footer [p []];

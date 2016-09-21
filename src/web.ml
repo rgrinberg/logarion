@@ -21,11 +21,11 @@ let print_ymd =
 let print_form =
   get "/()/new"
       begin fun req ->
-      `Html (Html.form (Logarion.blank_ymd)) |> respond'
+      `Html (Html.form (Ymd.blank_ymd)) |> respond'
       end
 
 let ymd_of_body_pairs pairs =
-  let open Logarion in
+  let open Ymd in
   let open Lens.Infix in
   let normal v = v |> List.hd |> trim_str in
   let of_str y k v = (k ^= normal v) y in
