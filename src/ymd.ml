@@ -61,7 +61,9 @@ let meta_field line =
   then (Re_str.(replace_first (regexp "^[ -] ") "" (List.nth e 0)), List.nth e 1)
   else (Re_str.(replace_first (regexp "^[ -] ") "" line), "")
 
-let field_map meta (k,v) = match k with
+let with_meta_kv meta (k,v) =
+  let open Lens.Infix in
+  match k with
   | "title"     -> of_str meta (meta_title) v
   | "name"      -> of_str meta (meta_author |-- author_name ) v
   | "email"     -> of_str meta (meta_author |-- author_email) v
@@ -74,10 +76,16 @@ let field_map meta (k,v) = match k with
   | "series"    -> of_str_list meta meta_series v
   | _ -> meta
 
+let with_kv ymd (k,v) =
+  let open Lens.Infix in
+  match k with
+  | "body" -> of_str ymd (ymd_body) v
+  | _      -> { ymd with meta = with_meta_kv ymd.meta (k,v) }
+
 let meta_of_yaml yaml =
   let fields = List.map meta_field (BatString.nsplit yaml "\n") in
   let open Lens.Infix in
-  List.fold_left field_map blank_meta fields
+  List.fold_left with_meta_kv blank_meta fields
 
 let of_string s =
   let segments = Re_str.(split (regexp "^---$")) s in
