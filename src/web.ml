@@ -34,7 +34,7 @@ let ymd_of_body_pairs pairs =
     | "title"        -> of_str ymd (ymd_meta |-- meta_title) value
     | "author_name"  -> of_str ymd (ymd_meta |-- meta_author |-- author_name) value
     | "author_email" -> of_str ymd (ymd_meta |-- meta_author |-- author_email) value
-    | "publish_date" -> ((ymd_meta |-- meta_date |-- date_published) ^= of_rfc (normal value)) ymd
+    | "publish_date" -> ((ymd_meta |-- meta_date |-- date_published) ^= date_of (normal value)) ymd
     | "topics"       -> of_str_list ymd (ymd_meta |-- meta_topics) value
     | "categories"   -> of_str_list ymd (ymd_meta |-- meta_categories) value
     | "keywords"     -> of_str_list ymd (ymd_meta |-- meta_keywords) value

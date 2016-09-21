@@ -5,9 +5,6 @@ let logarion_head ?(style="/style.css") t =
        
 let of_ymd ymd =
   let ymd_title = Ymd.(ymd.meta.title) in
-  let ymd_date = match Ymd.(ymd.meta.date.published) with
-    | Some t -> Some t
-    | None -> Ymd.(ymd.meta.date.edited) in
   let ymd_body = Omd.to_html (Omd.of_string Ymd.(ymd.body)) in
   html (logarion_head ymd_title)
        (body [
@@ -15,7 +12,7 @@ let of_ymd ymd =
                 h1 [Unsafe.data ymd_title];
                 details
                   (summary [Unsafe.data Ymd.(ymd.meta.abstract)])
-                  [time ~a:[a_datetime (Ymd.(to_rfc ymd_date))] []];
+                  [time ~a:[a_datetime (Ymd.(rfc_string_of ymd.meta.date.published))] []];
               ];
             Unsafe.data ymd_body;
             footer [p []];
