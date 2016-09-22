@@ -17,9 +17,16 @@ logarion.cmx: src/logarion.ml ymd.cmx
 	ymd.cmx src/logarion.ml
 
 ymd.cmx: src/ymd.ml
+	ocamlfind ocamlc -c -o ymd.cmi -linkpkg \
+	-package batteries,omd,lens,lens.ppx_deriving,ptime,re \
+	src/ymd.mli
 	ocamlfind ocamlopt -c -o ymd.cmx -linkpkg \
 	-package batteries,omd,lens,lens.ppx_deriving,ptime,re \
 	src/ymd.ml
+
+ymd.mli: src/ymd.ml
+	ocamlfind ocamlc -i src/ymd.ml \
+	-package batteries,omd,lens,lens.ppx_deriving,ptime,re > src/ymd.mli
 
 clean:
 	rm -f src/*.{cmx,cmi,o} *.{cmx,cmi,o}
