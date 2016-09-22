@@ -55,12 +55,6 @@ let filename_of_title t =
 
 let filename ymd = filename_of_title ymd.meta.title
 
-let meta_field line =
-  let e = Re_str.(bounded_split (regexp ": *")) line 2 in
-  if List.length e = 2
-  then (Re_str.(replace_first (regexp "^[ -] ") "" (List.nth e 0)), List.nth e 1)
-  else (Re_str.(replace_first (regexp "^[ -] ") "" line), "")
-
 let with_meta_kv meta (k,v) =
   let open Lens.Infix in
   match k with
@@ -82,8 +76,14 @@ let with_kv ymd (k,v) =
   | "body" -> of_str ymd (ymd_body) v
   | _      -> { ymd with meta = with_meta_kv ymd.meta (k,v) }
 
+let meta_pair_of_string line =
+  let e = Re_str.(bounded_split (regexp ": *")) line 2 in
+  if List.length e = 2
+  then (Re_str.(replace_first (regexp "^[ -] ") "" (List.nth e 0)), List.nth e 1)
+  else (Re_str.(replace_first (regexp "^[ -] ") "" line), "")
+
 let meta_of_yaml yaml =
-  let fields = List.map meta_field (BatString.nsplit yaml "\n") in
+  let fields = List.map meta_pair_of_string (BatString.nsplit yaml "\n") in
   let open Lens.Infix in
   List.fold_left with_meta_kv blank_meta fields
 
