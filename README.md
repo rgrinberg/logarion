@@ -24,10 +24,10 @@ Logarion can be used in two modes:
   
   Supports interactive features like searching and more advanced Atom feed parameters.
 
-## Source file structure
-
-- `src/`: Source code directory
-
 ## Requirements
 
 - [omd](https://github.com/ocaml/omd
+
+## See also
+
+- [CONTRIBUTING.md](CONTRIBUTING.md)
