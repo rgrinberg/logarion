@@ -1,0 +1,3 @@
+body { max-width: 90ch; margin: auto }
+
+label > span { min-width: 15ch; display:block }
