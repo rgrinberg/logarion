@@ -4,14 +4,14 @@
 
 Make sure you have OCaml >= 4.03.
 
-   opam install batteries lens ppx_deriving omd opium tyxml ptime re
-   git clone git@github.com:orbifx/logarion.git
-   cd logarion
-   make
+    opam install batteries lens ppx_deriving omd opium tyxml ptime re
+    git clone git@github.com:orbifx/logarion.git
+    cd logarion
+    make
 
 This should generate `logarion-web`. Run with:
 
-  logarion-web
+    logarion-web
 
 and open a browser to <http://localhost:3000>.
 To post a new article visit <http://localhost:3000/()/new>.
