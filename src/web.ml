@@ -40,6 +40,14 @@ let process_form =
        `Html (Html.of_ymd ymd) |> respond'
        end
 
+let edit_form =
+  get "/:title/edit"
+      begin fun req ->
+      let filename = sanitised_path (param req "title") in
+      let filepath = "ymd/" ^ filename ^ ".ymd" in
+      `Html (Html.form (Logarion.of_file filepath)) |> respond'
+      end
+
 let print_toc =
   get "/" begin fun req -> `Html (Html.of_titled_files (Logarion.titled_files ())) |> respond' end
 
@@ -47,6 +55,7 @@ let _ =
   App.empty
   |> print_ymd
   |> print_form
+  |> edit_form
   |> process_form
   |> print_css
   |> print_toc
