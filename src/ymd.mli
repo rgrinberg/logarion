@@ -1,21 +1,30 @@
 (** Functions for Yamado (.ymd) text files *)
 
-type author = { name : string; email : string; }
-type date = { edited : Ptime.t option; published : Ptime.t option; }
+type author = {
+    name : string;
+    email : string;
+  }
+type date = {
+    edited : Ptime.t option;
+    published : Ptime.t option;
+  }
 type meta = {
-  title : string;
-  author : author;
-  date : date;
-  categories : string list;
-  topics : string list;
-  keywords : string list;
-  series : string list;
-  abstract : string;
-}
+    title : string;
+    author : author;
+    date : date;
+    categories : string list;
+    topics : string list;
+    keywords : string list;
+    series : string list;
+    abstract : string;
+  }
 type ymd = { meta : meta; body : string; }
 
 val blank_meta : meta
+(** an empty [meta] *)
+
 val blank_ymd : ymd
+(** an empty [ymd] *)
 
 val filename_of_title : string -> string
 (** get how a file should be named according to a title [string] *)
@@ -26,13 +35,16 @@ val filename : ymd -> string
 (** {1 Conversions from and to string} *)
 
 val of_string : string -> ymd
-(** convert a string containing a ymd buffer to [ymd] **)
+(** convert a string containing a ymd buffer to [ymd] *)
 
 val to_string : ymd -> string
 (** convert a ymd to a [string] *)
 
 val meta_of_yaml : string -> meta
+(** a [meta] record from a YAML string *)
+
 val with_kv : ymd -> string * string -> ymd
+(** [with_kv ymd (key,value)] returns a [ymd] record based on ymd, but with key field, set to value. *)
 
 val trim_str : string -> string
 val list_of_csv : string -> string list
