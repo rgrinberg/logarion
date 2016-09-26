@@ -114,6 +114,7 @@ let to_string ymd =
               "\ntopics: ";     String.concat ", " ymd.meta.topics;
               "\ncategories: "; String.concat ", " ymd.meta.categories;
               "\nkeywords: ";   String.concat ", " ymd.meta.keywords;
+              "\nseries: ";     String.concat ", " ymd.meta.series;
               "\nabstract: ";   ymd.meta.abstract;
               "\n---\n"; ymd.body;
             ];
