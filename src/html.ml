@@ -60,7 +60,7 @@ let form ymd =
                         p [
                             label [
                                 span [pcdata"Text"];
-                                textarea ~a:[a_name "body"] (pcdata "");
+                                textarea ~a:[a_name "body"] (pcdata ymd.body);
                               ];
                           ];
                         p [ button ~a:[a_button_type `Submit] [pcdata "Submit"] ];
