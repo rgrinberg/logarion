@@ -15,4 +15,4 @@ clean:
 	$(OCB) -clean
 	rm -f src/*.{cmx,cmi,o} *.{cmx,cmi,o}
 
-.PHONY: doc
+.PHONY: web doc
