@@ -42,7 +42,7 @@ Logarion can be used in two modes:
 
 ## Requirements
 
-- [omd](https://github.com/ocaml/omd
+- [omd](https://github.com/ocaml/omd)
 
 ## See also
 
