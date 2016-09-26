@@ -1,4 +1,4 @@
-
+(** Functions for Yamado (.ymd) text files *)
 
 type author = { name : string; email : string; }
 type date = { edited : Ptime.t option; published : Ptime.t option; }
@@ -42,7 +42,7 @@ val of_str_list : 'a -> ('a, string list) Lens.t -> string -> 'a
 val meta_pair_of_string : string -> string * string
 val with_meta_kv : meta -> string * string -> meta
 
-(** {1 Conversions from and to date) *)
+(** {1 Conversions from and to date} *)
 
 val rfc_string_of : Ptime.t option -> string
 val date_of : string -> Ptime.t option
