@@ -50,8 +50,8 @@ let form ymd =
                       ~legend:(legend [pcdata "Create new article"])
                       [
                         input_set "Title" "title" ymd.meta.title;
-                        input_set "Author name" "author_name" ymd.meta.author.name;
-                        input_set "Author email" "author_email" ymd.meta.author.email;
+                        input_set "Author name" "name" ymd.meta.author.name;
+                        input_set "Author email" "email" ymd.meta.author.email;
                         input_set "Topics" "topics" (String.concat ", " ymd.meta.topics);
                         input_set "Categories" "categories" (String.concat ", " ymd.meta.categories);
                         input_set "Keywords" "keywords" (String.concat ", " ymd.meta.keywords);
