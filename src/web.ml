@@ -1,8 +1,6 @@
 open Opium.Std
 
-let filepath_of_param req prm =
-  let filename = Ymd.filename_of_title @@ param req prm in
-  "ymd/" ^ filename
+let ymdpath title = "ymd/" ^ (Ymd.filename_of_title title)
 
 let ymd_of_body_pairs pairs =
   let open Ymd in
@@ -10,20 +8,17 @@ let ymd_of_body_pairs pairs =
   ListLabels.fold_left ~f:(fun a (k,vl) -> with_kv a (k, List.hd vl) ) ~init:blank_ymd pairs
   |> ((ymd_meta |-- meta_date |-- date_edited) ^= Some (Ptime_clock.now ()))
 
-let ymd_of_req req =
-  let pairs = Lwt_main.run @@ App.urlencoded_pairs_of_body req in
-  ymd_of_body_pairs pairs
+let ymd_of_req req = ymd_of_body_pairs (Lwt_main.run @@ App.urlencoded_pairs_of_body req)
 
-let file_response file = `String (Logarion.load_file file) |> respond'
-let ymd_response ymd = `Html (Html.of_ymd (Logarion.of_file ymd)) |> respond'
-let form_response ymd = `Html (Html.form (Logarion.of_file ymd)) |> respond'
+let string_response s = `String s |> respond'
+let html_response h = `Html h |> respond'
 
-let _ =
+let () =
   App.empty
-  |> get "/:ttl"      (fun req -> filepath_of_param req "ttl" |> ymd_response)
-  |> get "/:ttl/edit" (fun req -> filepath_of_param req "ttl" |> form_response)
-  |> get "/style.css" (fun _ -> file_response "ymd/style.css")
-  |> get "/()/new"    (fun _ -> `Html (Html.form (Ymd.blank_ymd)) |> respond')
   |> post "/()/new"   (fun req -> let ymd = ymd_of_req req in Logarion.to_file ymd; `Html (Html.of_ymd ymd) |> respond')
-  |> get "/"          (fun req -> `Html (Html.of_titled_files (Logarion.titled_files ())) |> respond')
+  |> get "/:ttl"      (fun req -> param req "ttl" |> ymdpath |> Logarion.of_file |> Html.of_ymd |> html_response)
+  |> get "/:ttl/edit" (fun req -> param req "ttl" |> ymdpath |> Logarion.of_file |> Html.form   |> html_response)
+  |> get "/style.css" (fun _   -> "ymd/style.css" |> Logarion.load_file |> string_response)
+  |> get "/()/new"    (fun _   -> Ymd.blank_ymd |> Html.form |> html_response)
+  |> get "/"          (fun req -> Logarion.titled_files () |> Html.of_titled_files |> html_response)
   |> App.run_command
