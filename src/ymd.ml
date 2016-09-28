@@ -50,7 +50,10 @@ let of_str y k v = Lens.Infix.(k ^= trim_str v) y
 let of_str_list y k v = Lens.Infix.(k ^= list_of_csv (trim_str v)) y
 
 let filename_of_title t =
-  let sub c = match c with ' ' -> '_' | '/' -> '-' | c -> c in
+  let sub c = match c with
+    | ' ' | '\x00' -> '_'
+    | '/' -> '-'
+    | c   -> c in
   String.map sub t ^ ".ymd"
 
 let filename ymd = filename_of_title ymd.meta.title
