@@ -19,9 +19,11 @@ let of_file s =
     { blank_ymd with body = "Error parsing file" }
 
 let to_file ymd =
-  let oc = open_out ("ymd/" ^ (filename ymd))  in
-  Printf.fprintf oc "%s" (to_string ymd);
-  close_out oc
+  let open Lwt.Infix in
+  let path = "ymd/" ^ (filename ymd) in
+  Lwt_io.with_file ~mode:Lwt_io.output path  (fun out ->
+      Lwt_io.write out (to_string ymd)
+    )
 
 let titled_files () =
   let files = Array.to_list @@ Sys.readdir "ymd/" in
